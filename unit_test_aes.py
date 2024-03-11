@@ -11,10 +11,71 @@ from aes import BinaryPolynomial
 class TestBinaryPolynomial(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.correct_addition = [0, 1, 2, 3, 1, 0, 3, 2, 2, 3, 0, 1, 3, 2, 1, 0]
         cls.examples = [BinaryPolynomial(i) for i in range(4)]
         cls.correct_coefficients = [0, 1, 2, 3]
         cls.correct_less_significant_bit = [None, 0, 1, 0]
         cls.correct_most_significant_bit = [None, 0, 1, 1]
+        cls.correct_substraction = [
+            0,
+            1,
+            2,
+            3,
+            1,
+            0,
+            3,
+            2,
+            2,
+            3,
+            0,
+            1,
+            3,
+            2,
+            1,
+            0,
+        ]
+
+    def test_add(self):
+        """
+        Evaluates if the method of addition operates properly.
+
+        Returns
+        -------
+        None.
+
+        """
+        for i in range(len(self.correct_coefficients)):
+            for j in range(len(self.correct_coefficients)):
+                with self.subTest(
+                    a=self.correct_coefficients[i],
+                    b=self.correct_coefficients[j],
+                    i=4 * i + j,
+                ):
+                    self.assertEqual(
+                        self.correct_addition[4 * i + j],
+                        (self.examples[i] + self.examples[j]).coefficients,
+                    )
+
+    def test_sub(self):
+        """
+        Evaluates if the method of substraction operates properly.
+
+        Returns
+        -------
+        None.
+
+        """
+        for i in range(len(self.correct_coefficients)):
+            for j in range(len(self.correct_coefficients)):
+                with self.subTest(
+                    a=self.correct_coefficients[i],
+                    b=self.correct_coefficients[j],
+                    i=4 * i + j,
+                ):
+                    self.assertEqual(
+                        self.correct_substraction[4 * i + j],
+                        (self.examples[i] - self.examples[j]).coefficients,
+                    )
 
     def test_value_coefficients(self):
         """

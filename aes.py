@@ -10,18 +10,59 @@ from math import log
 class BinaryPolynomial:
     __slots__ = (
         "__coefficients",
-        "__most_significant_bit",
         "__less_significant_bit",
+        "__most_significant_bit",
     )
 
     def __init__(self, number: int):
         self.__coefficients = number
-        self.__most_significant_bit = (
-            self.__calculate_most_significant_bit_number()
-        )
         self.__less_significant_bit = (
             self.__calculate_less_significant_bit_number()
         )
+        self.__most_significant_bit = (
+            self.__calculate_most_significant_bit_number()
+        )
+
+    def __add__(self, binary_polynomial):
+        """
+        Calculates the addition of both polynomial in the
+        (Z_2[x]/m(x),⊕,⊗) with m(x) = x^8 + x^4 + x^3 + x + 1.
+
+        Parameters
+        ----------
+        binary_polynomial : BinaryPolynomial
+            BinaryPolynomial class object.
+
+        Returns
+        -------
+        BinaryPolynomial
+            Returns a BinaryPolynomial object with the coefficients as the
+            result of the addition.
+
+        """
+        return BinaryPolynomial(
+            self.coefficients ^ binary_polynomial.coefficients
+        )
+
+    def __calculate_less_significant_bit_number(self) -> int:
+        """
+        When the quoeficients value are set this calculate at 0(1) time the
+        Less Significant Bit (LSB).
+
+        Returns
+        -------
+        int
+            Position of the Less Significant Bit (LSB).
+
+        """
+        bit_array = self.__coefficients
+
+        bit_array &= -bit_array
+
+        if bit_array == 0:
+            return None
+
+        return int(log(bit_array, 2))
 
     def __calculate_most_significant_bit_number(self) -> int:
         """
@@ -69,53 +110,26 @@ class BinaryPolynomial:
 
         return int(log(bit_array, 2))
 
-    def __calculate_less_significant_bit_number(self) -> int:
+    def __sub__(self, binary_polynomial):
         """
-        When the quoeficients value are set this calculate at 0(1) time the
-        Less Significant Bit (LSB).
+        Calculates the substraction of both polynomial in the
+        (Z_2[x]/m(x),⊕,⊗) with m(x) = x^8 + x^4 + x^3 + x + 1.
+
+        Parameters
+        ----------
+        binary_polynomial : BinaryPolynomial
+            BinaryPolynomial class object.
 
         Returns
         -------
-        int
-            Position of the Less Significant Bit (LSB).
+        BinaryPolynomial
+            Returns a BinaryPolynomial object with the coefficients as the
+            result of the addition.
 
         """
-        bit_array = self.__coefficients
-
-        bit_array &= -bit_array
-
-        if bit_array == 0:
-            return None
-
-        return int(log(bit_array, 2))
-
-    @property
-    def most_significant_bit(self) -> int:
-        """
-        PGetter of the property that has stored the position of the Most
-        Significant Bit (MSB).
-
-        Returns
-        -------
-        int
-            Position of the Most Significant Bit (MSB).
-
-        """
-        return self.__most_significant_bit
-
-    @property
-    def less_significant_bit(self) -> int:
-        """
-        Getter of the property that has stored the position of the Less
-        Significant Bit (LSB).
-
-        Returns
-        -------
-        int
-            Position of the Less Significant Bit (LSB).
-
-        """
-        return self.__less_significant_bit
+        return BinaryPolynomial(
+            self.coefficients ^ binary_polynomial.coefficients
+        )
 
     @property
     def coefficients(self) -> int:
@@ -150,3 +164,31 @@ class BinaryPolynomial:
         self.__less_significant_bit = (
             self.__calculate_less_significant_bit_number()
         )
+
+    @property
+    def less_significant_bit(self) -> int:
+        """
+        Getter of the property that has stored the position of the Less
+        Significant Bit (LSB).
+
+        Returns
+        -------
+        int
+            Position of the Less Significant Bit (LSB).
+
+        """
+        return self.__less_significant_bit
+
+    @property
+    def most_significant_bit(self) -> int:
+        """
+        PGetter of the property that has stored the position of the Most
+        Significant Bit (MSB).
+
+        Returns
+        -------
+        int
+            Position of the Most Significant Bit (MSB).
+
+        """
+        return self.__most_significant_bit
