@@ -11,28 +11,90 @@ from aes import BinaryPolynomial
 class TestBinaryPolynomial(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.correct_addition = [0, 1, 2, 3, 1, 0, 3, 2, 2, 3, 0, 1, 3, 2, 1, 0]
-        cls.examples = [BinaryPolynomial(i) for i in range(4)]
+        cls.correct_addition = [
+            BinaryPolynomial(0),
+            BinaryPolynomial(1),
+            BinaryPolynomial(2),
+            BinaryPolynomial(3),
+            BinaryPolynomial(57),
+            BinaryPolynomial(83),
+            BinaryPolynomial(1),
+            BinaryPolynomial(0),
+            BinaryPolynomial(3),
+            BinaryPolynomial(2),
+            BinaryPolynomial(56),
+            BinaryPolynomial(82),
+            BinaryPolynomial(2),
+            BinaryPolynomial(3),
+            BinaryPolynomial(0),
+            BinaryPolynomial(1),
+            BinaryPolynomial(55),
+            BinaryPolynomial(81),
+            BinaryPolynomial(3),
+            BinaryPolynomial(2),
+            BinaryPolynomial(1),
+            BinaryPolynomial(0),
+            BinaryPolynomial(54),
+            BinaryPolynomial(80),
+            BinaryPolynomial(57),
+            BinaryPolynomial(56),
+            BinaryPolynomial(55),
+            BinaryPolynomial(0),
+            BinaryPolynomial(324),
+            BinaryPolynomial(83),
+            BinaryPolynomial(82),
+            BinaryPolynomial(81),
+            BinaryPolynomial(80),
+            BinaryPolynomial(324),
+            BinaryPolynomial(0),
+        ]
+        cls.examples = [
+            BinaryPolynomial(0),
+            BinaryPolynomial(1),
+            BinaryPolynomial(2),
+            BinaryPolynomial(3),
+            BinaryPolynomial(57),
+            BinaryPolynomial(83),
+        ]
         cls.correct_coefficients = [0, 1, 2, 3]
         cls.correct_less_significant_bit = [None, 0, 1, 0]
         cls.correct_most_significant_bit = [None, 0, 1, 1]
         cls.correct_substraction = [
-            0,
-            1,
-            2,
-            3,
-            1,
-            0,
-            3,
-            2,
-            2,
-            3,
-            0,
-            1,
-            3,
-            2,
-            1,
-            0,
+            BinaryPolynomial(0),
+            BinaryPolynomial(1),
+            BinaryPolynomial(2),
+            BinaryPolynomial(3),
+            BinaryPolynomial(57),
+            BinaryPolynomial(83),
+            BinaryPolynomial(1),
+            BinaryPolynomial(0),
+            BinaryPolynomial(3),
+            BinaryPolynomial(2),
+            BinaryPolynomial(56),
+            BinaryPolynomial(82),
+            BinaryPolynomial(2),
+            BinaryPolynomial(3),
+            BinaryPolynomial(0),
+            BinaryPolynomial(1),
+            BinaryPolynomial(55),
+            BinaryPolynomial(81),
+            BinaryPolynomial(3),
+            BinaryPolynomial(2),
+            BinaryPolynomial(1),
+            BinaryPolynomial(0),
+            BinaryPolynomial(54),
+            BinaryPolynomial(80),
+            BinaryPolynomial(57),
+            BinaryPolynomial(56),
+            BinaryPolynomial(55),
+            BinaryPolynomial(0),
+            BinaryPolynomial(324),
+            BinaryPolynomial(83),
+            BinaryPolynomial(82),
+            BinaryPolynomial(81),
+            BinaryPolynomial(80),
+            BinaryPolynomial(324),
+            BinaryPolynomial(0),
         ]
 
     def test_add(self):
@@ -53,7 +115,7 @@ class TestBinaryPolynomial(unittest.TestCase):
                 ):
                     self.assertEqual(
                         self.correct_addition[4 * i + j],
-                        (self.examples[i] + self.examples[j]).coefficients,
+                        self.examples[i] + self.examples[j],
                     )
 
     def test_sub(self):
@@ -74,7 +136,7 @@ class TestBinaryPolynomial(unittest.TestCase):
                 ):
                     self.assertEqual(
                         self.correct_substraction[4 * i + j],
-                        (self.examples[i] - self.examples[j]).coefficients,
+                        self.examples[i] - self.examples[j],
                     )
 
     def test_value_coefficients(self):
