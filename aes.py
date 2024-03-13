@@ -29,13 +29,13 @@ class BinaryPolynomial:
             "0": "\u2070",
             "1": "\u00B9",
             "2": "\u00B2",
-            "3": "u00B3",
-            "4": "u2074",
-            "5": "u2075",
-            "6": "u2076",
-            "7": "u2077",
-            "8": "u2078",
-            "9": "u2079",
+            "3": "\u00B3",
+            "4": "\u2074",
+            "5": "\u2075",
+            "6": "\u2076",
+            "7": "\u2077",
+            "8": "\u2078",
+            "9": "\u2079",
         }
 
     def __add__(self, binary_polynomial):
@@ -180,6 +180,29 @@ class BinaryPolynomial:
 
         return not self == binary_polynomial
 
+    def __repr__(self) -> str:
+        """
+        Represents the debug information about the polynomia.
+
+        Returns
+        -------
+        String
+            String containing the debug information of the polynomial.
+
+        """
+        string: str = (
+            "\nDEBUG INFORMATION\nPolynomial: "
+            + str(self)
+            + "\nCoefficients: "
+            + str(self.__coefficients)
+            + "\nLSB: "
+            + str(self.__less_significant_bit)
+            + "\nMSB: "
+            + str(self.__most_significant_bit)
+            + "\n"
+        )
+        return string
+
     def __str__(self) -> str:
         """
         Represent the polynomial as a string.
@@ -200,8 +223,10 @@ class BinaryPolynomial:
 
         string: str = " + ".join(list_character)
 
-        if binary_string[-1]:
-            string += " + 1"
+        if int(binary_string[-1]):
+            if string != "":
+                string += " + "
+            string += "1"
 
         return string
 
