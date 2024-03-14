@@ -143,6 +143,40 @@ class TestBinaryPolynomial(unittest.TestCase):
                         self.examples[i] + self.examples[j],
                     )
 
+    def test_eq(self):
+        """
+        Evaluates if the equal method works properly.
+
+        Returns
+        -------
+        None.
+
+        """
+        for i, j in zip(self.examples, self.examples):
+            with self.subTest(a=i, b=j):
+                self.assertTrue(i == j)
+
+        for i, j in zip(self.examples, self.examples[::-1]):
+            with self.subTest(a=i, b=j):
+                self.assertFalse(i == j)
+
+    def test_ne(self):
+        """
+        Evaluates if the not equal method works properly.
+
+        Returns
+        -------
+        None.
+
+        """
+        for i, j in zip(self.examples, self.examples):
+            with self.subTest(a=i, b=j):
+                self.assertFalse(i != j)
+
+        for i, j in zip(self.examples, self.examples[::-1]):
+            with self.subTest(a=i, b=j):
+                self.assertTrue(i != j)
+
     def test_sub(self):
         """
         Evaluates if the method of substraction operates properly.

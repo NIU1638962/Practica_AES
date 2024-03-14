@@ -213,22 +213,23 @@ class BinaryPolynomial:
             String with the decimal expresion of the binary coefficients.
 
         """
-        binary_string: str = bin(self.coefficients)[2:]
+        if self.__coefficients:
+            binary_string: str = bin(self.coefficients)[2:]
+            list_character: List[str] = [
+                "1 * x" + self.__subscript(self.most_significant_bit - i)
+                for i in range(self.most_significant_bit)
+                if int(binary_string[i])
+            ]
 
-        list_character: List[str] = [
-            "1 * x" + self.__subscript(self.most_significant_bit - i)
-            for i in range(self.most_significant_bit)
-            if int(binary_string[i])
-        ]
+            string: str = " + ".join(list_character)
 
-        string: str = " + ".join(list_character)
+            if int(binary_string[-1]):
+                if string != "":
+                    string += " + "
+                string += "1"
 
-        if int(binary_string[-1]):
-            if string != "":
-                string += " + "
-            string += "1"
-
-        return string
+            return string
+        return "0"
 
     def __sub__(self, binary_polynomial):
         """
