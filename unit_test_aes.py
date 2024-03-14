@@ -49,14 +49,6 @@ class TestBinaryPolynomial(unittest.TestCase):
             BinaryPolynomial(212),  # 1000 0011 + 0101 0111 = 1101 0100
             BinaryPolynomial(0),  # 1000 0011 + 1000 0011 = 0000 0000
         ]
-        cls.examples = [
-            BinaryPolynomial(0),  # 0000 0000
-            BinaryPolynomial(1),  # 0000 0001
-            BinaryPolynomial(2),  # 0000 0010
-            BinaryPolynomial(3),  # 0000 0011
-            BinaryPolynomial(87),  # 0101 0111
-            BinaryPolynomial(131),  # 1000 0011
-        ]
         cls.correct_coefficients = [
             0,  # 0000 0000
             1,  # 0000 0001
@@ -65,6 +57,82 @@ class TestBinaryPolynomial(unittest.TestCase):
             87,  # 0101 0111
             131,  # 1000 0011
         ]
+        cls.correct_greater = [
+            cls.assertFalse,  # 0000 0000 > 0000 0000 = False
+            cls.assertFalse,  # 0000 0000 > 0000 0001 = False
+            cls.assertFalse,  # 0000 0000 > 0000 0010 = False
+            cls.assertFalse,  # 0000 0000 > 0000 0011 = False
+            cls.assertFalse,  # 0000 0000 > 0101 0111 = False
+            cls.assertFalse,  # 0000 0000 > 1000 0011 = False
+            cls.assertTrue,  # 0000 0001 > 0000 0000 = True
+            cls.assertFalse,  # 0000 0001 > 0000 0001 = False
+            cls.assertFalse,  # 0000 0001 > 0000 0010 = False
+            cls.assertFalse,  # 0000 0001 > 0000 0011 = False
+            cls.assertFalse,  # 0000 0001 > 0101 0111 = False
+            cls.assertFalse,  # 0000 0001 > 1000 0011 = False
+            cls.assertTrue,  # 0000 0010 > 0000 0000 = True
+            cls.assertTrue,  # 0000 0010 > 0000 0001 = True
+            cls.assertFalse,  # 0000 0010 > 0000 0010 = False
+            cls.assertFalse,  # 0000 0010 > 0000 0011 = False
+            cls.assertFalse,  # 0000 0010 > 0101 0111 = False
+            cls.assertFalse,  # 0000 0010 > 1000 0011 = False
+            cls.assertTrue,  # 0000 0011 > 0000 0000 = True
+            cls.assertTrue,  # 0000 0011 > 0000 0001 = True
+            cls.assertTrue,  # 0000 0011 > 0000 0010 = True
+            cls.assertFalse,  # 0000 0011 > 0000 0011 = False
+            cls.assertFalse,  # 0000 0011 > 0101 0111 = False
+            cls.assertFalse,  # 0000 0011 > 1000 0011 = False
+            cls.assertTrue,  # 0101 0111 > 0000 0000 = True
+            cls.assertTrue,  # 0101 0111 > 0000 0001 = True
+            cls.assertTrue,  # 0101 0111 > 0000 0010 = True
+            cls.assertTrue,  # 0101 0111 > 0000 0011 = True
+            cls.assertFalse,  # 0101 0111 > 0101 0111 = False
+            cls.assertFalse,  # 0101 0111 > 1000 0011 = False
+            cls.assertTrue,  # 1000 0011 > 0000 0000 = True
+            cls.assertTrue,  # 1000 0011 > 0000 0001 = True
+            cls.assertTrue,  # 1000 0011 > 0000 0010 = True
+            cls.assertTrue,  # 1000 0011 > 0000 0011 = True
+            cls.assertTrue,  # 1000 0011 > 0101 0111 = True
+            cls.assertFalse,  # 1000 0011 > 1000 0011 = False
+        ]
+        cls.correct_greater_or_equal = [
+            cls.assertTrue,  # 0000 0000 => 0000 0000 = True
+            cls.assertFalse,  # 0000 0000 => 0000 0001 = False
+            cls.assertFalse,  # 0000 0000 => 0000 0010 = False
+            cls.assertFalse,  # 0000 0000 => 0000 0011 = False
+            cls.assertFalse,  # 0000 0000 => 0101 0111 = False
+            cls.assertFalse,  # 0000 0000 => 1000 0011 = False
+            cls.assertTrue,  # 0000 0001 => 0000 0000 = True
+            cls.assertTrue,  # 0000 0001 => 0000 0001 = True
+            cls.assertFalse,  # 0000 0001 => 0000 0010 = False
+            cls.assertFalse,  # 0000 0001 => 0000 0011 = False
+            cls.assertFalse,  # 0000 0001 => 0101 0111 = False
+            cls.assertFalse,  # 0000 0001 => 1000 0011 = False
+            cls.assertTrue,  # 0000 0010 => 0000 0000 = True
+            cls.assertTrue,  # 0000 0010 => 0000 0001 = True
+            cls.assertTrue,  # 0000 0010 => 0000 0010 = True
+            cls.assertFalse,  # 0000 0010 => 0000 0011 = False
+            cls.assertFalse,  # 0000 0010 => 0101 0111 = False
+            cls.assertFalse,  # 0000 0010 => 1000 0011 = False
+            cls.assertTrue,  # 0000 0011 => 0000 0000 = True
+            cls.assertTrue,  # 0000 0011 => 0000 0001 = True
+            cls.assertTrue,  # 0000 0011 => 0000 0010 = True
+            cls.assertTrue,  # 0000 0011 => 0000 0011 = True
+            cls.assertFalse,  # 0000 0011 => 0101 0111 = False
+            cls.assertFalse,  # 0000 0011 => 1000 0011 = False
+            cls.assertTrue,  # 0101 0111 => 0000 0000 = True
+            cls.assertTrue,  # 0101 0111 => 0000 0001 = True
+            cls.assertTrue,  # 0101 0111 => 0000 0010 = True
+            cls.assertTrue,  # 0101 0111 => 0000 0011 = True
+            cls.assertTrue,  # 0101 0111 => 0101 0111 = True
+            cls.assertFalse,  # 0101 0111 => 1000 0011 = False
+            cls.assertTrue,  # 1000 0011 => 0000 0000 = True
+            cls.assertTrue,  # 1000 0011 => 0000 0001 = True
+            cls.assertTrue,  # 1000 0011 => 0000 0010 = True
+            cls.assertTrue,  # 1000 0011 => 0000 0011 = True
+            cls.assertTrue,  # 1000 0011 => 0101 0111 = True
+            cls.assertTrue,  # 1000 0011 => 1000 0011 = True
+        ]
         cls.correct_less_significant_bit = [
             None,  # None
             0,  # 0000 0001
@@ -72,6 +140,82 @@ class TestBinaryPolynomial(unittest.TestCase):
             0,  # 0000 0001
             0,  # 0000 0001
             0,  # 0000 0001
+        ]
+        cls.correct_less_or_equal = [
+            cls.assertTrue,  # 0000 0000 <= 0000 0000 = True
+            cls.assertTrue,  # 0000 0000 <= 0000 0001 = True
+            cls.assertTrue,  # 0000 0000 <= 0000 0010 = True
+            cls.assertTrue,  # 0000 0000 <= 0000 0011 = True
+            cls.assertTrue,  # 0000 0000 <= 0101 0111 = True
+            cls.assertTrue,  # 0000 0000 <= 1000 0011 = True
+            cls.assertFalse,  # 0000 0001 <= 0000 0000 = False
+            cls.assertTrue,  # 0000 0001 <= 0000 0001 = True
+            cls.assertTrue,  # 0000 0001 <= 0000 0010 = True
+            cls.assertTrue,  # 0000 0001 <= 0000 0011 = True
+            cls.assertTrue,  # 0000 0001 <= 0101 0111 = True
+            cls.assertTrue,  # 0000 0001 <= 1000 0011 = True
+            cls.assertFalse,  # 0000 0010 <= 0000 0000 = False
+            cls.assertFalse,  # 0000 0010 <= 0000 0001 = False
+            cls.assertTrue,  # 0000 0010 <= 0000 0010 = True
+            cls.assertTrue,  # 0000 0010 <= 0000 0011 = True
+            cls.assertTrue,  # 0000 0010 <= 0101 0111 = True
+            cls.assertTrue,  # 0000 0010 <= 1000 0011 = True
+            cls.assertFalse,  # 0000 0011 <= 0000 0000 = False
+            cls.assertFalse,  # 0000 0011 <= 0000 0001 = False
+            cls.assertFalse,  # 0000 0011 <= 0000 0010 = False
+            cls.assertTrue,  # 0000 0011 <= 0000 0011 = True
+            cls.assertTrue,  # 0000 0011 <= 0101 0111 = True
+            cls.assertTrue,  # 0000 0011 <= 1000 0011 = True
+            cls.assertFalse,  # 0101 0111 <= 0000 0000 = False
+            cls.assertFalse,  # 0101 0111 <= 0000 0001 = False
+            cls.assertFalse,  # 0101 0111 <= 0000 0010 = False
+            cls.assertFalse,  # 0101 0111 <= 0000 0011 = False
+            cls.assertTrue,  # 0101 0111 <= 0101 0111 = True
+            cls.assertTrue,  # 0101 0111 <= 1000 0011 = True
+            cls.assertFalse,  # 1000 0011 <= 0000 0000 = False
+            cls.assertFalse,  # 1000 0011 <= 0000 0001 = False
+            cls.assertFalse,  # 1000 0011 <= 0000 0010 = False
+            cls.assertFalse,  # 1000 0011 <= 0000 0011 = False
+            cls.assertFalse,  # 1000 0011 <= 0101 0111 = False
+            cls.assertTrue,  # 1000 0011 <= 1000 0011 = True
+        ]
+        cls.correct_lesser = [
+            cls.assertFalse,  # 0000 0000 < 0000 0000 = False
+            cls.assertTrue,  # 0000 0000 < 0000 0001 = True
+            cls.assertTrue,  # 0000 0000 < 0000 0010 = True
+            cls.assertTrue,  # 0000 0000 < 0000 0011 = True
+            cls.assertTrue,  # 0000 0000 < 0101 0111 = True
+            cls.assertTrue,  # 0000 0000 < 1000 0011 = True
+            cls.assertFalse,  # 0000 0001 < 0000 0000 = False
+            cls.assertFalse,  # 0000 0001 < 0000 0001 = False
+            cls.assertTrue,  # 0000 0001 < 0000 0010 = True
+            cls.assertTrue,  # 0000 0001 < 0000 0011 = True
+            cls.assertTrue,  # 0000 0001 < 0101 0111 = True
+            cls.assertTrue,  # 0000 0001 < 1000 0011 = True
+            cls.assertFalse,  # 0000 0010 < 0000 0000 = False
+            cls.assertFalse,  # 0000 0010 < 0000 0001 = False
+            cls.assertFalse,  # 0000 0010 < 0000 0010 = False
+            cls.assertTrue,  # 0000 0010 < 0000 0011 = True
+            cls.assertTrue,  # 0000 0010 < 0101 0111 = True
+            cls.assertTrue,  # 0000 0010 < 1000 0011 = True
+            cls.assertFalse,  # 0000 0011 < 0000 0000 = False
+            cls.assertFalse,  # 0000 0011 < 0000 0001 = False
+            cls.assertFalse,  # 0000 0011 < 0000 0010 = False
+            cls.assertFalse,  # 0000 0011 < 0000 0011 = False
+            cls.assertTrue,  # 0000 0011 < 0101 0111 = True
+            cls.assertTrue,  # 0000 0011 < 1000 0011 = True
+            cls.assertFalse,  # 0101 0111 < 0000 0000 = False
+            cls.assertFalse,  # 0101 0111 < 0000 0001 = False
+            cls.assertFalse,  # 0101 0111 < 0000 0010 = False
+            cls.assertFalse,  # 0101 0111 < 0000 0011 = False
+            cls.assertFalse,  # 0101 0111 < 0101 0111 = False
+            cls.assertTrue,  # 0101 0111 < 1000 0011 = True
+            cls.assertFalse,  # 1000 0011 < 0000 0000 = False
+            cls.assertFalse,  # 1000 0011 < 0000 0001 = False
+            cls.assertFalse,  # 1000 0011 < 0000 0010 = False
+            cls.assertFalse,  # 1000 0011 < 0000 0011 = False
+            cls.assertFalse,  # 1000 0011 < 0101 0111 = False
+            cls.assertFalse,  # 1000 0011 < 1000 0011 = False
         ]
         cls.correct_most_significant_bit = [
             None,  # None
@@ -119,8 +263,16 @@ class TestBinaryPolynomial(unittest.TestCase):
             BinaryPolynomial(212),  # 1000 0011 - 0101 0111 = 1101 0100
             BinaryPolynomial(0),  # 1000 0011 - 1000 0011 = 0000 0000
         ]
+        cls.examples = [
+            BinaryPolynomial(0),  # 0000 0000
+            BinaryPolynomial(1),  # 0000 0001
+            BinaryPolynomial(2),  # 0000 0010
+            BinaryPolynomial(3),  # 0000 0011
+            BinaryPolynomial(87),  # 0101 0111
+            BinaryPolynomial(131),  # 1000 0011
+        ]
 
-        cls.__N = len(cls.examples)
+        cls.N = len(cls.examples)
 
     def test_add(self):
         """
@@ -131,15 +283,15 @@ class TestBinaryPolynomial(unittest.TestCase):
         None.
 
         """
-        for i in range(self.__N):
-            for j in range(self.__N):
+        for i in range(self.N):
+            for j in range(self.N):
                 with self.subTest(
                     a=self.correct_coefficients[i],
                     b=self.correct_coefficients[j],
-                    i=len(self.examples) * i + j,
+                    i=self.N * i + j,
                 ):
                     self.assertEqual(
-                        self.correct_addition[self.__N * i + j],
+                        self.correct_addition[self.N * i + j],
                         self.examples[i] + self.examples[j],
                     )
 
@@ -159,6 +311,86 @@ class TestBinaryPolynomial(unittest.TestCase):
         for i, j in zip(self.examples, self.examples[::-1]):
             with self.subTest(a=i, b=j):
                 self.assertFalse(i == j)
+
+    def test_ge(self):
+        """
+        Evaluates if the greater-or-equal-than method works properly.
+
+        Returns
+        -------
+        None.
+
+        """
+        for i in range(self.N):
+            for j in range(self.N):
+                with self.subTest(
+                    a=self.correct_coefficients[i],
+                    b=self.correct_coefficients[j],
+                    i=self.N * i + j,
+                ):
+                    self.correct_greater_or_equal[self.N * i + j](
+                        self, self.examples[i] >= self.examples[j]
+                    )
+
+    def test_gt(self):
+        """
+        Evaluates if the greater-than method works properly.
+
+        Returns
+        -------
+        None.
+
+        """
+        for i in range(self.N):
+            for j in range(self.N):
+                with self.subTest(
+                    a=self.correct_coefficients[i],
+                    b=self.correct_coefficients[j],
+                    i=self.N * i + j,
+                ):
+                    self.correct_greater[self.N * i + j](
+                        self, self.examples[i] > self.examples[j]
+                    )
+
+    def test_le(self):
+        """
+        Evaluates if the less-or-equal-than method works properly.
+
+        Returns
+        -------
+        None.
+
+        """
+        for i in range(self.N):
+            for j in range(self.N):
+                with self.subTest(
+                    a=self.correct_coefficients[i],
+                    b=self.correct_coefficients[j],
+                    i=self.N * i + j,
+                ):
+                    self.correct_less_or_equal[self.N * i + j](
+                        self, self.examples[i] <= self.examples[j]
+                    )
+
+    def test_lt(self):
+        """
+        Evaluates if the less-than method works properly.
+
+        Returns
+        -------
+        None.
+
+        """
+        for i in range(self.N):
+            for j in range(self.N):
+                with self.subTest(
+                    a=self.correct_coefficients[i],
+                    b=self.correct_coefficients[j],
+                    i=self.N * i + j,
+                ):
+                    self.correct_lesser[self.N * i + j](
+                        self, self.examples[i] < self.examples[j]
+                    )
 
     def test_ne(self):
         """
@@ -186,15 +418,15 @@ class TestBinaryPolynomial(unittest.TestCase):
         None.
 
         """
-        for i in range(self.__N):
-            for j in range(self.__N):
+        for i in range(self.N):
+            for j in range(self.N):
                 with self.subTest(
                     a=self.correct_coefficients[i],
                     b=self.correct_coefficients[j],
                     i=len(self.examples) * i + j,
                 ):
                     self.assertEqual(
-                        self.correct_substraction[self.__N * i + j],
+                        self.correct_substraction[self.N * i + j],
                         self.examples[i] - self.examples[j],
                     )
 
@@ -208,11 +440,9 @@ class TestBinaryPolynomial(unittest.TestCase):
         None.
 
         """
-        for i in range(self.__N):
-            with self.subTest(number=self.correct_coefficients[i]):
-                self.assertEqual(
-                    self.correct_coefficients[i], self.examples[i].coefficients
-                )
+        for correct, test in zip(self.correct_coefficients, self.examples):
+            with self.subTest(number=correct):
+                self.assertEqual(correct, test.coefficients)
 
     def test_value_less_significant_bit(self):
         """
@@ -224,12 +454,11 @@ class TestBinaryPolynomial(unittest.TestCase):
 
         """
 
-        for i in range(self.__N):
-            with self.subTest(number=self.correct_coefficients[i]):
-                self.assertEqual(
-                    self.correct_less_significant_bit[i],
-                    self.examples[i].less_significant_bit,
-                )
+        for correct, test in zip(
+            self.correct_less_significant_bit, self.examples
+        ):
+            with self.subTest(number=correct):
+                self.assertEqual(correct, test.less_significant_bit)
 
     def test_value_most_significant_bit(self):
         """
@@ -241,12 +470,11 @@ class TestBinaryPolynomial(unittest.TestCase):
 
         """
 
-        for i in range(self.__N):
-            with self.subTest(number=self.correct_coefficients[i]):
-                self.assertEqual(
-                    self.correct_most_significant_bit[i],
-                    self.examples[i].most_significant_bit,
-                )
+        for correct, test in zip(
+            self.correct_most_significant_bit, self.examples
+        ):
+            with self.subTest(number=correct):
+                self.assertEqual(correct, test.most_significant_bit)
 
 
 if __name__ == "__main__":

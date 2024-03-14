@@ -148,6 +148,44 @@ class BinaryPolynomial:
         """
         return self.__coefficients == binary_polynomial.__coefficients
 
+    def __ge__(self, binary_polynomial) -> bool:
+        """
+        Compares the coefficients of two binary polynomials and returns if the
+        first polynomial is greater or equal than the second polynomial.
+
+        Parameters
+        ----------
+        binary_polynomial : BinaryPolynomial
+            BinaryPolynomial class object.
+
+        Returns
+        -------
+        Boolean
+            If the first polynomial is greater or equal (True) or not (False)
+            than the second polynomial.
+
+        """
+        return (self > binary_polynomial) or (self == binary_polynomial)
+
+    def __gt__(self, binary_polynomial) -> bool:
+        """
+        Compares the coefficients of two binary polynomials and returns if the
+        first polynomial is greater than the second polynomial.
+
+        Parameters
+        ----------
+        binary_polynomial : BinaryPolynomial
+            BinaryPolynomial class object.
+
+        Returns
+        -------
+        Boolean
+            If the first polynomial is greater (True) or not (False) than the
+            second polynomial.
+
+        """
+        return self.__coefficients > binary_polynomial.__coefficients
+
     def __index__(self) -> int:
         """
         Returns the decimal integer form of the coefficients.For the bin() and
@@ -179,6 +217,44 @@ class BinaryPolynomial:
         """
 
         return not self == binary_polynomial
+
+    def __le__(self, binary_polynomial) -> bool:
+        """
+        Compares the coefficients of two binary polynomials and returns if the
+        first polynomial is lesser or equal than the second polynomial.
+
+        Parameters
+        ----------
+        binary_polynomial : BinaryPolynomial
+            BinaryPolynomial class object.
+
+        Returns
+        -------
+        Boolean
+            If the first polynomial is lesser or equal (True) or not (False)
+            than the second polynomial.
+
+        """
+        return (self < binary_polynomial) or (self == binary_polynomial)
+
+    def __lt__(self, binary_polynomial) -> bool:
+        """
+        Compares the coefficients of two binary polynomials and returns if the
+        first polynomial is lesser than the second polynomial.
+
+        Parameters
+        ---------
+        binary_polynomial : BinaryPolynomial
+            BinaryPolynomial class object.
+
+        Returns
+        -------
+        Boolean
+            If the first polynomial is lesser (True) or not (False) than the
+            second polynomial.
+
+        """
+        return self.__coefficients < binary_polynomial.__coefficients
 
     def __repr__(self) -> str:
         """
