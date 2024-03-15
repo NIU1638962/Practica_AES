@@ -199,6 +199,26 @@ class BinaryPolynomial:
         """
         return self.__coefficients
 
+    def __mul__(self, binary_polynomial):
+        """
+        Calculates the multiplication of both polynomial in the
+        (Z_2[x]/m(x),⊕,⊗) with m(x) = x^8 + x^4 + x^3 + x + 1.
+
+        Parameters
+        ----------
+        binary_polynomial : BinaryPolynomial
+            BinaryPolynomial class object.
+
+        Returns
+        -------
+        BinaryPolynomial
+            Returns a BinaryPolynomial object with the coefficients as the
+            result of the addition.
+
+        """
+        # TODO
+        pass
+
     def __ne__(self, binary_polynomial) -> bool:
         """
         Compares the coefficients of two binary polynomials and returns if they

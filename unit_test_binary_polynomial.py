@@ -225,6 +225,44 @@ class TestBinaryPolynomial(unittest.TestCase):
             6,  # 0100 0000
             7,  # 1000 0000
         ]
+        cls.correct_multiplication = [
+            BinaryPolynomial(0),  # 0000 0000 * 0000 0000 = 0000 0000
+            BinaryPolynomial(0),  # 0000 0000 * 0000 0001 = 0000 0000
+            BinaryPolynomial(0),  # 0000 0000 * 0000 0010 = 0000 0000
+            BinaryPolynomial(0),  # 0000 0000 * 0000 0011 = 0000 0000
+            BinaryPolynomial(0),  # 0000 0000 * 0101 0111 = 0000 0000
+            BinaryPolynomial(0),  # 0000 0000 * 1000 0011 = 0000 0000
+            BinaryPolynomial(0),  # 0000 0001 * 0000 0000 = 0000 0000
+            BinaryPolynomial(1),  # 0000 0001 * 0000 0001 = 0000 0001
+            BinaryPolynomial(2),  # 0000 0001 * 0000 0010 = 0000 0010
+            BinaryPolynomial(3),  # 0000 0001 * 0000 0011 = 0000 0011
+            BinaryPolynomial(87),  # 0000 0001 * 0101 0111 = 0101 0111
+            BinaryPolynomial(131),  # 0000 0001 * 1000 0011 = 1000 0011
+            BinaryPolynomial(0),  # 0000 0010 * 0000 0000 = 0000 0000
+            BinaryPolynomial(2),  # 0000 0010 * 0000 0001 = 0000 0010
+            BinaryPolynomial(4),  # 0000 0010 * 0000 0010 = 0000 0100
+            BinaryPolynomial(6),  # 0000 0010 * 0000 0011 = 0000 0110
+            BinaryPolynomial(174),  # 0000 0010 * 0101 0111 = 1010 1110
+            BinaryPolynomial(29),  # 0000 0010 * 1000 0011 = 0001 1101
+            BinaryPolynomial(0),  # 0000 0011 * 0000 0000 = 0000 0000
+            BinaryPolynomial(3),  # 0000 0011 * 0000 0001 = 0000 0011
+            BinaryPolynomial(6),  # 0000 0011 * 0000 0010 = 0000 0110
+            BinaryPolynomial(5),  # 0000 0011 * 0000 0011 = 0000 0101
+            BinaryPolynomial(249),  # 0000 0011 * 0101 0111 = 1111 1001
+            BinaryPolynomial(78),  # 0000 0011 * 1000 0011 = 1001 1110
+            BinaryPolynomial(0),  # 0101 0111 * 0000 0000 = 0000 0000
+            BinaryPolynomial(87),  # 0101 0111 * 0000 0001 = 0101 0111
+            BinaryPolynomial(174),  # 0101 0111 * 0000 0010 = 1010 1110
+            BinaryPolynomial(249),  # 0101 0111 * 0000 0011 = 1111 1001
+            BinaryPolynomial(165),  # 0101 0111 * 0101 0111 = 1010 0101
+            BinaryPolynomial(193),  # 0101 0111 * 1000 0011 = 1100 0001
+            BinaryPolynomial(0),  # 1000 0011 * 0000 0000 = 0000 0000
+            BinaryPolynomial(131),  # 1000 0011 * 0000 0001 = 1000 0011
+            BinaryPolynomial(29),  # 1000 0011 * 0000 0010 = 0001 1101
+            BinaryPolynomial(158),  # 1000 0011 * 0000 0011 = 1001 1110
+            BinaryPolynomial(193),  # 1000 0011 * 0101 0111 = 1100 0001
+            BinaryPolynomial(159),  # 1000 0011 * 1000 0011 = 1001 1111
+        ]
         cls.correct_substraction = [
             BinaryPolynomial(0),  # 0000 0000 - 0000 0000 = 0000 0000
             BinaryPolynomial(1),  # 0000 0000 - 0000 0001 = 0000 0001
@@ -390,6 +428,27 @@ class TestBinaryPolynomial(unittest.TestCase):
                 ):
                     self.correct_lesser[self.N * i + j](
                         self, self.examples[i] < self.examples[j]
+                    )
+
+    def test_mul(self):
+        """
+        Evaluates if the multiply method works properly.
+
+        Returns
+        -------
+        None.
+
+        """
+        for i in range(self.N):
+            for j in range(self.N):
+                with self.subTest(
+                    a=self.correct_coefficients[i],
+                    b=self.correct_coefficients[j],
+                    i=self.N * i + j,
+                ):
+                    self.assertEqual(
+                        self.correct_multiplication[self.N * i + j],
+                        self.examples[i] * self.examples[j],
                     )
 
     def test_ne(self):
