@@ -13,10 +13,11 @@ class BinaryPolynomial:
         "__coefficients",
         "__less_significant_bit",
         "__most_significant_bit",
+        "__field_polynomial",
         "__supertext_map",
     )
 
-    def __init__(self, number: int):
+    def __init__(self, number: int, field_polynomial):
         self.__coefficients: int = number
         self.__less_significant_bit: int | None = (
             self.__calculate_less_significant_bit_number()
@@ -349,6 +350,21 @@ class BinaryPolynomial:
         )
 
     def __subscript(self, number: int) -> str:
+        """
+        Formats a number as a string of such numebr subscripted for the string
+        method to printe the polynomial.
+
+        Parameters
+        ----------
+        number : int
+            Number to be subscripted.
+
+        Returns
+        -------
+        str
+            String with the number formatted as subscript.
+
+        """
         string_number: str = str(number)
         string: str = ""
         for i in string_number:
