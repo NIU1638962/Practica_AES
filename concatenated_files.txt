@@ -1,0 +1,300 @@
+====================
+ShiftRows.py
+====================
+
+from AES_constants_and_tools import print_matrix
+
+def shift_rows(state):
+    """Aplica la operación ShiftRows al estado dado."""
+    new_state = [row[:] for row in state]  # Hacer una copia del estado para evitar mutación in-place
+    for i in range(1, 4):
+        new_state[i] = new_state[i][i:] + new_state[i][:i]
+    return new_state
+
+if __name__ == "__main__":
+
+    estado =  [
+    [0xd4, 0xe0, 0xb8, 0x1e],
+    [0x27, 0xbf, 0xb4, 0x41],
+    [0x11, 0x98, 0x5d, 0x52],
+    [0xae, 0xf1, 0xe5, 0x30],
+    ]
+    
+    print_matrix(estado, "Estado antes de ShiftRows:")
+
+    # Aplicar ShiftRows
+    new_state = shift_rows(estado)
+
+    # Imprimir el estado después de ShiftRows
+    print_matrix(new_state, "Estado después de ShiftRows:")
+
+
+====================
+AddRoundKey.py
+====================
+
+from AES_constants_and_tools import CAD_DEBUG, KEY, print_matrix
+
+def add_round_key(state, round_key):
+    """Aplica la operación AddRoundKey al estado dado."""
+    for i in range(4):
+        for j in range(4):
+            state[i][j] ^= round_key[i][j]
+    return state
+
+if __name__ == "__main__":
+    # Usando CAD_DEBUG y KEY directamente desde el archivo auxiliar
+    estado = CAD_DEBUG
+     
+    print_matrix(estado, "Estado sin cifrar:\n")
+    
+    # Imprimir la round_key
+    print_matrix(KEY, "\nRound Key:\n")
+    
+    # Aplicar AddRoundKey
+    new_state = add_round_key(estado, KEY)
+    
+    # Imprimir el estado después de AddRoundKey
+    print_matrix(new_state, "\nEstado después de AddRoundKey:\n")
+
+
+====================
+AES.py
+====================
+
+# AES.py
+from AES_constants_and_tools import KEY, CAD_DEBUG
+from Key_Expantion import key_expantion
+from AddRoundKey import add_round_key
+from ByteSub import sub_bytes
+from ShiftRows import shift_rows
+from MixColumns import mix_columns
+
+def write_matrix_to_file(file, matrix, title="Matriz"):
+    file.write(f"{title} = [\n")
+    for row in matrix:
+        row_str = ', '.join(f"0x{x:02x}" for x in row)
+        file.write(f"    [{row_str}],\n")
+    file.write("]\n\n")
+
+def aes_encrypt(plaintext, key, filename="aes_output.txt"):
+    state = plaintext
+    with open(filename, 'w') as file:
+        # Aplana la matriz 4x4 de la clave para la expansión
+        key_flat = [byte for row in key for byte in row]
+        expanded_key = key_expantion(key_flat)
+        file.write("Expansión de la llave:\n")
+        write_matrix_to_file(file, [expanded_key[i:i+16] for i in range(0, len(expanded_key), 16)], "Clave Expandida")
+
+        # Genera las claves de ronda a partir de la clave expandida
+        round_keys = []
+        for r in range(11):
+            round_key = expanded_key[16*r:16*(r+1)]
+            round_key_matrix = [round_key[4*i:4*(i+1)] for i in range(4)]
+            round_keys.append(round_key_matrix)
+            
+        write_matrix_to_file(file, state, "Input:")
+        write_matrix_to_file(file, key, "Clave Inicial:")
+
+        # Rondas de cifrado AES
+        state = add_round_key(state, round_keys[0])  # Ronda inicial
+        write_matrix_to_file(file, state, "Estado después de AddRoundKey 0")
+        
+        for i in range(1, 10):
+            state = sub_bytes(state)
+            write_matrix_to_file(file, state, f"Estado después de ByteSub {i}")
+            state = shift_rows(state)
+            write_matrix_to_file(file, state, f"Estado después de ShiftRows {i}")
+            state = mix_columns(state)
+            write_matrix_to_file(file, state, f"Estado después de MixColumns {i}")
+            state = add_round_key(state, round_keys[i])
+            write_matrix_to_file(file, state, f"Estado después de AddRoundKey {i}")
+        
+        # Última ronda (sin MixColumns)
+        state = sub_bytes(state)
+        write_matrix_to_file(file, state, f"Estado después de ByteSub {10}")
+        state = shift_rows(state)
+        write_matrix_to_file(file, state, f"Estado después de ShiftRows {10}")
+        state = add_round_key(state, round_keys[10])
+        write_matrix_to_file(file, state, f"Estado después de AddRoundKey {10}")
+
+        write_matrix_to_file(file, state, "Output del cifrado:")
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    plaintext = CAD_DEBUG
+    aes_encrypt(plaintext, KEY)
+
+
+====================
+AES_constants_and_tools.py
+====================
+
+# Definición de la S-Box
+S_BOX = [
+            0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
+            0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
+            0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15,
+            0x04, 0xC7, 0x23, 0xC3, 0x18, 0x96, 0x05, 0x9A, 0x07, 0x12, 0x80, 0xE2, 0xEB, 0x27, 0xB2, 0x75,
+            0x09, 0x83, 0x2C, 0x1A, 0x1B, 0x6E, 0x5A, 0xA0, 0x52, 0x3B, 0xD6, 0xB3, 0x29, 0xE3, 0x2F, 0x84,
+            0x53, 0xD1, 0x00, 0xED, 0x20, 0xFC, 0xB1, 0x5B, 0x6A, 0xCB, 0xBE, 0x39, 0x4A, 0x4C, 0x58, 0xCF,
+            0xD0, 0xEF, 0xAA, 0xFB, 0x43, 0x4D, 0x33, 0x85, 0x45, 0xF9, 0x02, 0x7F, 0x50, 0x3C, 0x9F, 0xA8,
+            0x51, 0xA3, 0x40, 0x8F, 0x92, 0x9D, 0x38, 0xF5, 0xBC, 0xB6, 0xDA, 0x21, 0x10, 0xFF, 0xF3, 0xD2,
+            0xCD, 0x0C, 0x13, 0xEC, 0x5F, 0x97, 0x44, 0x17, 0xC4, 0xA7, 0x7E, 0x3D, 0x64, 0x5D, 0x19, 0x73,
+            0x60, 0x81, 0x4F, 0xDC, 0x22, 0x2A, 0x90, 0x88, 0x46, 0xEE, 0xB8, 0x14, 0xDE, 0x5E, 0x0B, 0xDB,
+            0xE0, 0x32, 0x3A, 0x0A, 0x49, 0x06, 0x24, 0x5C, 0xC2, 0xD3, 0xAC, 0x62, 0x91, 0x95, 0xE4, 0x79,
+            0xE7, 0xC8, 0x37, 0x6D, 0x8D, 0xD5, 0x4E, 0xA9, 0x6C, 0x56, 0xF4, 0xEA, 0x65, 0x7A, 0xAE, 0x08,
+            0xBA, 0x78, 0x25, 0x2E, 0x1C, 0xA6, 0xB4, 0xC6, 0xE8, 0xDD, 0x74, 0x1F, 0x4B, 0xBD, 0x8B, 0x8A,
+            0x70, 0x3E, 0xB5, 0x66, 0x48, 0x03, 0xF6, 0x0E, 0x61, 0x35, 0x57, 0xB9, 0x86, 0xC1, 0x1D, 0x9E,
+            0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
+            0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16
+]
+
+# Tabla Rcon para 10 rondas de cifrado
+RCON = [
+    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36
+]
+
+
+CAD = "JoelT AlejandroJ"
+
+
+CAD_DEBUG = [
+    [0x32, 0x88, 0x31, 0xe0],
+    [0x43, 0x5a, 0x31, 0x37],
+    [0xf6, 0x30, 0x98, 0x07],
+    [0xa8, 0x8d, 0xa2, 0x34]
+]
+
+KEY = [
+    [0x2b, 0x28, 0xab, 0x09],
+    [0x7e, 0xae, 0xf7, 0xcf],
+    [0x15, 0xd2, 0x15, 0x4f],
+    [0x16, 0xa6, 0x88, 0x3c]
+]
+
+def print_matrix(matrix, title="Matriz"):
+    """Imprime la matriz en formato de lista de Python con elementos hexadecimales."""
+    print(f"{title} = [")
+    for row in matrix:
+        row_str = ', '.join(f"0x{x:02x}" for x in row)
+        print(f"    [{row_str}],")
+    print("]")
+
+
+====================
+ByteSub.py
+====================
+
+from AES_constants_and_tools import S_BOX, print_matrix
+
+def sub_bytes(state):
+    """Aplica la operación SubBytes usando la S_BOX."""
+    for i in range(4):
+        for j in range(4):
+            byte = state[i][j]
+            # Accede a S_BOX para la sustitución
+            state[i][j] = S_BOX[byte]
+    return state
+
+if __name__ == "__main__":
+    # Estado después de AddRoundKey (ejemplo, reemplaza con tu estado real)
+    estado = [
+    [0x19, 0xa0, 0x9a, 0xe9],
+    [0x3d, 0xf4, 0xc6, 0xf8],
+    [0xe3, 0xe2, 0x8d, 0x48],
+    [0xbe, 0x2b, 0x2a, 0x08],
+]
+    print_matrix(estado, "Estado antes de ByteSub:")
+
+    # Aplicar SubBytes
+    new_state = sub_bytes(estado)
+
+    # Imprimir el estado después de SubBytes
+    print_matrix(new_state, "Estado después de ByteSub:")
+
+
+====================
+Key_Expantion.py
+====================
+
+# Key_Expantion.py
+from AES_constants_and_tools import S_BOX, RCON
+
+def sub_word(word):
+    """Aplica la S-Box a cada byte de una palabra."""
+    return [S_BOX[b] for b in word]
+
+def rot_word(word):
+    """Realiza una rotación hacia la izquierda en una palabra."""
+    return word[1:] + word[:1]
+
+def key_expantion(key):
+    key_size = 16  # 16 para AES-128
+    Nk = 4  # Número de palabras de 32 bits en la clave, 4 para AES-128
+    Nr = 10  # Número de rondas para AES-128
+    expanded_key = key[:]  # Inicia la clave expandida con la clave original
+    
+    for i in range(Nk, 4 * (Nr + 1)):
+        temp = expanded_key[-4:]  # Correctamente obtiene la última palabra
+        if i % Nk == 0:
+            # Operaciones RotWord y SubWord sobre 'temp'
+            temp = sub_word(rot_word(temp))
+            temp[0] ^= RCON[i // Nk - 1]
+        # La operación XOR se hace con la palabra que está Nk palabras atrás
+        temp = [temp[j] ^ expanded_key[-key_size + j] for j in range(4)]
+        expanded_key += temp
+
+    
+    return expanded_key
+
+
+====================
+MixColumns.py
+====================
+
+# MixColumns.py
+from AES_constants_and_tools import print_matrix, S_BOX
+
+def xtime(a):
+    """Realiza la multiplicación por x (es decir, {02}) en GF(2^8)."""
+    return (((a << 1) & 0xFF) ^ (0x1B if (a & 0x80) else 0x00))
+
+def mix_single_column(a):
+    """Mezcla una sola columna."""
+    # Ver la especificación de AES para detalles sobre esta operación
+    t = a[0] ^ a[1] ^ a[2] ^ a[3]
+    u = a[0]
+    a[0] ^= t ^ xtime(a[0] ^ a[1])
+    a[1] ^= t ^ xtime(a[1] ^ a[2])
+    a[2] ^= t ^ xtime(a[2] ^ a[3])
+    a[3] ^= t ^ xtime(a[3] ^ u)
+    return a
+
+def mix_columns(state):
+    """Aplica MixColumns a todo el estado."""
+    for i in range(4):
+        column = [state[row][i] for row in range(4)]
+        column = mix_single_column(column)
+        for row in range(4):
+            state[row][i] = column[row]
+    return state
+
+if __name__ == "__main__":
+
+    estado = [
+    [0xd4, 0xe0, 0xb8, 0x1e],
+    [0xbf, 0xb4, 0x41, 0x27],
+    [0x5d, 0x52, 0x11, 0x98],
+    [0x30, 0xae, 0xf1, 0xe5],
+    ]
+    
+    print_matrix(estado, "Estado antes de MixColumns:")
+
+    # Aplicar MixColumns
+    new_state = mix_columns(estado)
+
+    # Imprimir el estado después de MixColumns
+    print_matrix(new_state, "Estado después de MixColumns:")
+
+
